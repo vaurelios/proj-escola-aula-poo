@@ -31,10 +31,9 @@ CREATE TABLE turmas(
 
 CREATE TABLE escolas(
     `id` INT NOT NULL AUTO_INCREMENT,
-    `uuid` VARCHAR(45) NOT NULL,
     `nome` VARCHAR(255) NOT NULL,
     `endereco` VARCHAR(255),
-    PRIMARY KEY(id, uuid)
+    PRIMARY KEY(id)
 );
 
 ALTER TABLE alunos ADD FOREIGN KEY (turma_id) REFERENCES turmas(id) ON UPDATE cascade ON DELETE cascade;
