@@ -2,29 +2,32 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Turma {
 
     private int _id;
-    private String _uuid;
     private String _serie;
     private Map<String, Aluno> alunos;
 
-    public Turma(String uuid, boolean fetch)
+    public Turma(int id, boolean fetch)
     {
-        this._uuid = uuid;
+        this._id = id;
+
+        alunos = new HashMap<>();
+
+        if (fetch) obterDados();
     }
 
     public Turma(String serie)
     {
-        _uuid = UUID.randomUUID().toString();
+        this(ThreadLocalRandom.current().nextInt(1, 101), false);
 
         this._serie = serie;
-
-        alunos = new HashMap<>();
     }
 
     public int getId()
@@ -35,16 +38,6 @@ public class Turma {
     public void setId(int id)
     {
         this._id = id;
-    }
-
-    public String getUuid()
-    {
-        return this._uuid;
-    }
-
-    public void setUuid(String uuid)
-    {
-        this._uuid = uuid;
     }
 
     public String getSerie()
@@ -69,7 +62,7 @@ public class Turma {
 
     public void addAluno(Aluno aluno)
     {
-        if (!this.alunoMatriculado(this.getUuid()))
+        if (!this.alunoMatriculado(aluno.getId()))
         {
             this.alunos.put(aluno.getId(), aluno);
         }
@@ -81,6 +74,11 @@ public class Turma {
         {
             this.alunos.remove(id);
         }
+    }
+
+    public Collection<Aluno> getAlunosCollection()
+    {
+        return alunos.values();
     }
 
     protected void obterDados()
@@ -122,7 +120,7 @@ public class Turma {
         try
         {
             PreparedStatement pstmt = Principal.dbConnection.prepareStatement("INSERT INTO alunos(uuid, nome, endereco, turma_id) VALUES(?, ?, ?, ?)");
-        
+
             for (Map.Entry<String, Aluno> e : alunos.entrySet())
             {
                 pstmt.setString(1, e.getValue().getId());
@@ -136,5 +134,23 @@ public class Turma {
         {
             e.printStackTrace();
         }
+    }
+
+    public boolean removerDb()
+    {
+        if (this.getId() == -1 || !Principal.dbConnected) return false;
+
+        try
+        {
+            PreparedStatement pstmt = Principal.dbConnection.prepareStatement("DELETE FROM turmas WHERE id = ?");
+            pstmt.setInt(1, this.getId());
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

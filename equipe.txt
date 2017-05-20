@@ -1,0 +1,4 @@
+Equipe:
+ - Victor A. Santos <victoraur.santos@gmail.com>
+ - Rogério Carlos <carlosrog1414@hotmail.com>
+ - José Idnis <idnissorim@gmail.com>
