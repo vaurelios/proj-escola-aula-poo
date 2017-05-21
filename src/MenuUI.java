@@ -87,7 +87,7 @@ public final class MenuUI {
         }
     }
 
-    private static void listarTurmas()
+    private void listarTurmas()
     {
         System.out.printf("%-5s | %-67s\n", "ID", "Série");
 
