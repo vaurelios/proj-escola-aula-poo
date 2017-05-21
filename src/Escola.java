@@ -1,9 +1,7 @@
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +9,7 @@ import java.util.Map;
 public final class Escola {
     private static Escola instance = null;
     private final Map<Integer, Turma> turmas;
-    private final Map<String, Professor> profs;
+    private final Map<Integer, Professor> profs;
 
     private Escola()
     {
@@ -69,16 +67,16 @@ public final class Escola {
             }
         }
 
-        for (Map.Entry<String, Professor> e : profs.entrySet())
+        for (Map.Entry<Integer, Professor> e : profs.entrySet())
         {
             Professor prof = e.getValue();
 
-            PreparedStatement stmtProf = Principal.dbConnection.prepareStatement("INSERT INTO professores(uuid, nome, endereco, salario) VALUES(?, ?, ?, ?)");
-            stmtProf.setString(1, prof.getId());
+            PreparedStatement stmtProf = Principal.dbConnection.prepareStatement("INSERT INTO professores(nome, endereco, salario) VALUES(?, ?, ?)");
+            stmtProf.setInt(1, prof.getId());
             stmtProf.setString(2, prof.getNome());
             stmtProf.setString(3, prof.getEndereco());
             stmtProf.setDouble(4, prof.getSalario());
-            stmtProf.execute();
+            stmtProf.executeUpdate();
         }
     }
 
@@ -144,17 +142,17 @@ public final class Escola {
         turmas.remove(id);
     }
 
-    public void removerProfessor(String id)
+    public void removerProfessor(int id)
     {
         profs.remove(id);
     }
 
-    public void matricularAluno(String tid, Aluno aluno)
+    public void matricularAluno(int tid, Aluno aluno)
     {
         turmas.get(tid).addAluno(aluno);
     }
 
-    public void removerAluno(String tid, String aid)
+    public void removerAluno(int tid, int aid)
     {
         turmas.get(tid).removerAluno(aid);
     }

@@ -5,16 +5,15 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Turma {
 
     private int _id;
     private String _serie;
-    private Map<String, Aluno> alunos;
+    private Map<Integer, Aluno> alunos;
 
-    public Turma(int id, boolean fetch)
+    public Turma(int id, boolean fetch) throws SQLException
     {
         this._id = id;
 
@@ -23,7 +22,7 @@ public class Turma {
         if (fetch) obterDados();
     }
 
-    public Turma(String serie)
+    public Turma(String serie) throws SQLException
     {
         this(ThreadLocalRandom.current().nextInt(1, 101), false);
 
@@ -50,14 +49,17 @@ public class Turma {
         return this.alunos.size();
     }
 
-    public boolean alunoMatriculado(String id)
+    public boolean alunoMatriculado(int id)
     {
         return alunos.containsKey(id);
     }
 
-    public Aluno getAluno(String id)
+    public Aluno getAluno(int id) throws IndexOutOfBoundsException
     {
-        return this.alunoMatriculado(id) ? alunos.get(id) : null;
+        if (alunoMatriculado(id))
+            return alunos.get(id);
+
+        throw new IndexOutOfBoundsException("Aluno com ID(" + id + ") não encontrado!");
     }
 
     public void addAluno(Aluno aluno)
@@ -68,7 +70,7 @@ public class Turma {
         }
     }
 
-    public void removerAluno(String id)
+    public void removerAluno(int id)
     {
         if (this.alunoMatriculado(id))
         {
@@ -81,76 +83,52 @@ public class Turma {
         return alunos.values();
     }
 
-    protected void obterDados()
+    protected void obterDados() throws SQLException
     {
-        try
-        {
-            PreparedStatement pstmt = Principal.dbConnection.prepareStatement("SELECT * FROM turmas WHERE id = ?");
-            pstmt.setInt(1, this.getId());
+        PreparedStatement pstmt = Principal.dbConnection.prepareStatement("SELECT * FROM turmas WHERE id = ?");
+        pstmt.setInt(1, this.getId());
 
-            if (pstmt.execute())
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next())
+        {
+            this._serie = rs.getString("serie");
+
+            PreparedStatement stmtAlunos = Principal.dbConnection.prepareStatement("SELECT * FROM alunos WHERE turma_id = ?");
+            stmtAlunos.setInt(1, this.getId());
+
+            ResultSet rsAluno = stmtAlunos.executeQuery();
+            if (rsAluno.next())
             {
-                ResultSet rs = pstmt.getResultSet();
+                Aluno aluno = new Aluno(rsAluno.getInt("id"),
+                        rsAluno.getString("nome"),
+                        rsAluno.getString("endereco"));
 
-                this._serie = rs.getString("serie");
-
-                PreparedStatement stmtAlunos = Principal.dbConnection.prepareStatement("SELECT * FROM alunos WHERE turma_id = ?");
-                stmtAlunos.setInt(1, this.getId());
-
-                if (stmtAlunos.execute())
-                {
-                    ResultSet rsAluno = stmtAlunos.getResultSet();
-
-                    Aluno aluno = new Aluno(rsAluno.getString("uuid"),
-                            rsAluno.getString("nome"),
-                            rsAluno.getString("endereco"));
-
-                    alunos.put(aluno.getId(), aluno);
-                }
+                alunos.put(aluno.getId(), aluno);
             }
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
         }
     }
 
-    protected void populaDb()
+    protected void populaDb() throws SQLException
     {
         // salvar alunos
-        try
-        {
-            PreparedStatement pstmt = Principal.dbConnection.prepareStatement("INSERT INTO alunos(uuid, nome, endereco, turma_id) VALUES(?, ?, ?, ?)");
+        PreparedStatement pstmt = Principal.dbConnection.prepareStatement("INSERT INTO alunos(nome, endereco, turma_id) VALUES(?, ?, ?)");
 
-            for (Map.Entry<String, Aluno> e : alunos.entrySet())
-            {
-                pstmt.setString(1, e.getValue().getId());
-                pstmt.setString(2, e.getValue().getNome());
-                pstmt.setString(3, e.getValue().getEndereco());
-                pstmt.setInt(4, this.getId());
-                pstmt.execute();
-            }
-        }
-        catch (SQLException e)
+        for (Map.Entry<Integer, Aluno> e : alunos.entrySet())
         {
-            e.printStackTrace();
+            pstmt.setString(1, e.getValue().getNome());
+            pstmt.setString(2, e.getValue().getEndereco());
+            pstmt.setInt(3, this.getId());
+            pstmt.executeUpdate();
         }
     }
 
-    public boolean removerDb()
+    public boolean removerDb() throws SQLException
     {
         if (this.getId() == -1 || !Principal.dbConnected) return false;
 
-        try
-        {
-            PreparedStatement pstmt = Principal.dbConnection.prepareStatement("DELETE FROM turmas WHERE id = ?");
-            pstmt.setInt(1, this.getId());
+        PreparedStatement pstmt = Principal.dbConnection.prepareStatement("DELETE FROM turmas WHERE id = ?");
+        pstmt.setInt(1, this.getId());
 
-            return pstmt.executeUpdate() > 0;
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-
-        return false;
+        return pstmt.executeUpdate() > 0;
     }
 }

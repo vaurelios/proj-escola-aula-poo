@@ -164,7 +164,7 @@ public final class MenuUI {
             case 3:
                 // alterarProfInte();
             case 4:
-                // removerProfInte();
+                // removerProfessor();
             case 5:
                 // alterarAlunoInte();
                 break;
@@ -183,7 +183,6 @@ public final class MenuUI {
     {
         System.out.printf("%-5s | %-72s\n", "ID", "Serie");
 
-
         for (Turma t : Escola.getInstance().getTurmas())
         {
             System.out.printf("%-5d | %-72s\n", t.getId(), t.getSerie());
@@ -197,6 +196,30 @@ public final class MenuUI {
         if (id == -1) return;
 
         Escola.getInstance().removerTurma(id);
+
+        removerTurma();
+    }
+
+    private void removerProfessor()
+    {
+        System.out.printf("%-5s | %-30s | %-31s | %-5s\n", "ID", "Nome", "Endereço", "Salário");
+
+        for (Professor p : Escola.getInstance().getProfessores())
+        {
+            System.out.printf("%-5d | %-30s | %-31s | %-5.2f\n",
+                    p.getId(),
+                    p.getNome(),
+                    p.getEndereco(),
+                    p.getSalario());
+        }
+
+        System.out.printf("Digite um ID (-1 Para Voltar): ");
+
+        int id = scn.nextInt();
+
+        if (id == -1) return;
+
+        Escola.getInstance().removerProfessor(id);
 
         removerTurma();
     }

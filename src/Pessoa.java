@@ -1,11 +1,11 @@
-import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Pessoa {
-	private String _id;
+	private int _id;
 	private String _nome;
 	private String _endereco;
 
-	public Pessoa(String id, String nome, String endereco)
+	public Pessoa(int id, String nome, String endereco)
 	{
 		this._id = id;
 		this._nome = nome;
@@ -14,15 +14,15 @@ public class Pessoa {
 
 	public Pessoa(String nome, String endereco)
 	{
-		this(UUID.randomUUID().toString(), nome, endereco);
+		this(ThreadLocalRandom.current().nextInt(1, 101), nome, endereco);
 	}
-	
-	public String getId()
+
+	public int getId()
 	{
 		return this._id;
 	}
 
-	protected void setId(String id)
+	protected void setId(int id)
 	{
 		this._id = id;
 	}

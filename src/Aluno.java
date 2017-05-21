@@ -5,7 +5,7 @@ public class Aluno extends Pessoa {
 	    super(nome, endereco);
 	}
 
-	public Aluno(String id, String nome, String endereco)
+	public Aluno(int id, String nome, String endereco)
 	{
 		super(id, nome, endereco);
 	}
