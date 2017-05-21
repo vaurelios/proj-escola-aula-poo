@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public final class MenuUI {
@@ -130,7 +131,7 @@ public final class MenuUI {
                 // criarProfessor();
                 break;
             case 2:
-                // criarTurma();
+                criarTurma();
                 break;
             case 3:
                 // criarAluno();
@@ -140,6 +141,22 @@ public final class MenuUI {
         }
 
         criar();
+    }
+
+    private void criarTurma()
+    {
+        System.out.println("Entre com os dados da nova turma...");
+        System.out.printf("Entre com a série: ");
+        String serie = scn.next();
+
+        try
+        {
+            Turma t = new Turma(serie);
+            Escola.getInstance().cadastrarNovaTurma(t);
+        } catch (SQLException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void modificar()

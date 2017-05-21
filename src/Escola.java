@@ -80,11 +80,13 @@ public final class Escola {
         }
     }
 
-    public void cadastrarNovaTurma(Turma turma)
+    public void cadastrarNovaTurma(Turma turma) throws SQLException
     {
         if (turmas.containsKey(turma.getId())) return;
 
         turmas.put(turma.getId(), turma);
+
+        turma.populaDb();
     }
 
     public void cadastrarNovoProfessor(Professor prof)

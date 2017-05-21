@@ -2,6 +2,7 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,6 +111,15 @@ public class Turma {
 
     protected void populaDb() throws SQLException
     {
+        // salvar turma
+        PreparedStatement stmtTurma = Principal.dbConnection.prepareStatement("INSERT INTO turmas(serie) VALUES(?)", Statement.RETURN_GENERATED_KEYS);
+        stmtTurma.setString(1, this.getSerie());
+        stmtTurma.executeUpdate();
+
+        ResultSet rs = stmtTurma.getGeneratedKeys();
+        if (rs.next())
+            this._id = rs.getInt(1);
+
         // salvar alunos
         PreparedStatement pstmt = Principal.dbConnection.prepareStatement("INSERT INTO alunos(nome, endereco, turma_id) VALUES(?, ?, ?)");
 
