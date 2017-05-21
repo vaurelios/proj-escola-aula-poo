@@ -169,7 +169,7 @@ public final class MenuUI {
                 // alterarAlunoInte();
                 break;
             case 6:
-                // removerAlunoInte();
+                removerAluno();
                 break;
             case 7:
             default:
@@ -221,6 +221,33 @@ public final class MenuUI {
 
         Escola.getInstance().removerProfessor(id);
 
-        removerTurma();
+        removerProfessor();
+    }
+
+    private void removerAluno()
+    {
+        System.out.printf("%-5s | %-30s | %-31s | %-5s\n", "ID", "Nome", "Endereço", "ID da Turma");
+
+        for (Turma t : Escola.getInstance().getTurmas())
+        {
+            for (Aluno a : t.getAlunosCollection())
+            {
+                System.out.printf("%-5d | %-30s | %-31s | %-5d\n",
+                        a.getId(),
+                        a.getNome(),
+                        a.getEndereco(),
+                        t.getId());
+            }
+        }
+
+        System.out.printf("Digite um ID (-1 Para Voltar): ");
+
+        int id = scn.nextInt();
+
+        if (id == -1) return;
+
+        Escola.getInstance().removerProfessor(id);
+
+        removerAluno();
     }
 }
