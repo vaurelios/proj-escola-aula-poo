@@ -152,12 +152,14 @@ public final class Escola {
 
     public void removerProfessor(int id)
     {
+        profs.get(id).removerDb();
         profs.remove(id);
     }
 
-    public void matricularAluno(int tid, Aluno aluno)
+    public void matricularAluno(int tid, Aluno aluno) throws SQLException
     {
         turmas.get(tid).addAluno(aluno);
+        turmas.get(tid).populaDb();
     }
 
     public void removerAluno(int tid, int aid)

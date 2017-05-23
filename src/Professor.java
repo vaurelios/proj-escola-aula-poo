@@ -2,9 +2,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Professor extends Pessoa {
-	private double _salario;
+    private double _salario;
 
-	public Professor(int id, String nome, String endereco, double salario)
+    public Professor(int id, String nome, String endereco, double salario)
     {
         super(id);
 
@@ -13,24 +13,24 @@ public class Professor extends Pessoa {
         this.setSalario(salario);
     }
 
-	public Professor(String nome, String endereco, double salario)
-	{
-		super(nome, endereco);
+    public Professor(String nome, String endereco, double salario)
+    {
+        super(nome, endereco);
 
-		this._salario = salario;
-	}
+        this._salario = salario;
+    }
 
-	public double getSalario()
-	{
-		return this._salario;
-	}
+    public double getSalario()
+    {
+        return this._salario;
+    }
 
-	public void setSalario(double salario)
-	{
-		this._salario = salario;
-	}
+    public void setSalario(double salario)
+    {
+        this._salario = salario;
+    }
 
-	public void populaDb() throws SQLException
+    public void populaDb() throws SQLException
     {
         if (Principal.dbConnected == false) return;
 
@@ -39,5 +39,15 @@ public class Professor extends Pessoa {
         pstmt.setString(2, this.getEndereco());
         pstmt.setDouble(3, this.getSalario());
         pstmt.executeUpdate();
+    }
+
+    public boolean removerDb() throws SQLException
+    {
+        if (this.getId() == -1 || !Principal.dbConnected) return false;
+
+        PreparedStatement pstmt = Principal.dbConnection.prepareStatement("DELETE FROM professores WHERE id = ?");
+        pstmt.setInt(1, this.getId());
+
+        return pstmt.executeUpdate() > 0;
     }
 }

@@ -109,7 +109,7 @@ public final class MenuUI {
         {
             for (Aluno a : t.getAlunosCollection())
             {
-                System.out.printf("%-5d | %-27s | %-30s | %-5.2f\n",
+                System.out.printf("%-5d | %-27s | %-32s | %-5d\n",
                         a.getId(),
                         a.getNome(),
                         a.getEndereco(),
@@ -135,7 +135,7 @@ public final class MenuUI {
                 criarTurma();
                 break;
             case 3:
-                // criarAluno();
+                criarAluno();
             case 4:
             default:
                 return;
@@ -163,10 +163,8 @@ public final class MenuUI {
     private void criarProfessor()
     {
         System.out.println("Entre com os dados do novo professor...");
-        System.out.printf("Entre com o nome: ");
-        String nome = scn.next();
-        System.out.printf("Entre com o endereço: ");
-        String endereco = scn.next();
+        String nome = promptString("Entre com o nome: ");
+        String endereco = promptString("Entre com o endereço: ");
         System.out.print("Entre Com Salário: ");
         double salario = scn.nextDouble();
 
@@ -177,6 +175,28 @@ public final class MenuUI {
         } catch (SQLException e)
         {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void criarAluno()
+    {
+        System.out.println("Entre com os dados do novo aluno...");
+        String nome = promptString("Entre com o nome: ");
+        String endereco = promptString("Entre com o endereço: ");
+
+        listarTurmas();
+
+        int idTurma = promptInt("Digite o ID da turma (-1 Para Voltar): ");
+
+        if (idTurma == -1) return;
+
+        try
+        {
+            Aluno aluno = new Aluno(nome, endereco);
+            Escola.getInstance().matricularAluno(idTurma, aluno);
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -202,7 +222,7 @@ public final class MenuUI {
             case 3:
                 // alterarProfInte();
             case 4:
-                // removerProfessor();
+                removerProfessor();
             case 5:
                 // alterarAlunoInte();
                 break;
@@ -287,5 +307,17 @@ public final class MenuUI {
         Escola.getInstance().removerProfessor(id);
 
         removerAluno();
+    }
+
+    private int promptInt(String msg)
+    {
+        System.out.printf("%s", msg);
+        return scn.nextInt();
+    }
+
+    private String promptString(String msg)
+    {
+        System.out.printf("%s", msg);
+        return scn.next();
     }
 }
