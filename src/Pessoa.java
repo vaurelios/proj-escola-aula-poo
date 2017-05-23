@@ -5,9 +5,14 @@ public class Pessoa {
 	private String _nome;
 	private String _endereco;
 
-	public Pessoa(int id, String nome, String endereco)
+	public Pessoa(int id)
 	{
 		this._id = id;
+	}
+
+	public Pessoa(int id, String nome, String endereco)
+	{
+		this(id);
 		this._nome = nome;
 		this._endereco = endereco;
 	}

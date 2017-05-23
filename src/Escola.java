@@ -25,21 +25,28 @@ public final class Escola {
         return instance;
     }
 
-    public void obterDados()
+    public void obterDados() throws SQLException
     {
-        try
-        {
-            ResultSet rs = Principal.dbConnection.createStatement().executeQuery("SELECT * FROM turmas");
 
-            while (rs.next())
-            {
-                Turma t = new Turma(rs.getInt("id"), true);
+        ResultSet rs = Principal.dbConnection.createStatement().executeQuery("SELECT * FROM turmas");
 
-                turmas.put(t.getId(), t);
-            }
-        } catch (SQLException e)
+        while (rs.next())
         {
-            e.printStackTrace();
+            Turma t = new Turma(rs.getInt("id"), true);
+
+            turmas.put(t.getId(), t);
+        }
+
+        rs = Principal.dbConnection.createStatement().executeQuery("SELECT * FROM professores");
+
+        while (rs.next())
+        {
+            Professor p = new Professor(rs.getInt("id"),
+                    rs.getString("nome"),
+                    rs.getString("endereco"),
+                    rs.getDouble("salario"));
+
+            profs.put(p.getId(), p);
         }
     }
 
@@ -89,14 +96,13 @@ public final class Escola {
         turma.populaDb();
     }
 
-    public void cadastrarNovoProfessor(Professor prof)
+    public void cadastrarNovoProfessor(Professor prof) throws SQLException
     {
-        if (profs.containsKey(prof.getId()))
-        {
-            return;
-        }
+        if (profs.containsKey(prof.getId())) return;
 
         profs.put(prof.getId(), prof);
+
+        prof.populaDb();
     }
 
     public int getQuantTurmas()

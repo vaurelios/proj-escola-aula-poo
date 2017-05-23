@@ -1,5 +1,17 @@
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class Professor extends Pessoa {
 	private double _salario;
+
+	public Professor(int id, String nome, String endereco, double salario)
+    {
+        super(id);
+
+        this.setNome(nome);
+        this.setEndereco(endereco);
+        this.setSalario(salario);
+    }
 
 	public Professor(String nome, String endereco, double salario)
 	{
@@ -17,4 +29,15 @@ public class Professor extends Pessoa {
 	{
 		this._salario = salario;
 	}
+
+	public void populaDb() throws SQLException
+    {
+        if (Principal.dbConnected == false) return;
+
+        PreparedStatement pstmt = Principal.dbConnection.prepareStatement("INSERT INTO professores(nome, endereco, salario) VALUES(?, ?, ?)");
+        pstmt.setString(1, this.getNome());
+        pstmt.setString(2, this.getEndereco());
+        pstmt.setDouble(3, this.getSalario());
+        pstmt.executeUpdate();
+    }
 }

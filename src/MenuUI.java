@@ -8,6 +8,7 @@ public final class MenuUI {
     private MenuUI()
     {
         scn = new Scanner(System.in);
+        scn.useDelimiter("\n\r|\n");
     }
 
     public static MenuUI getInstance()
@@ -128,7 +129,7 @@ public final class MenuUI {
         switch (scn.nextInt())
         {
             case 1:
-                // criarProfessor();
+                criarProfessor();
                 break;
             case 2:
                 criarTurma();
@@ -153,6 +154,26 @@ public final class MenuUI {
         {
             Turma t = new Turma(serie);
             Escola.getInstance().cadastrarNovaTurma(t);
+        } catch (SQLException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void criarProfessor()
+    {
+        System.out.println("Entre com os dados do novo professor...");
+        System.out.printf("Entre com o nome: ");
+        String nome = scn.next();
+        System.out.printf("Entre com o endereço: ");
+        String endereco = scn.next();
+        System.out.print("Entre Com Salário: ");
+        double salario = scn.nextDouble();
+
+        try
+        {
+            Professor p = new Professor(nome, endereco, salario);
+            Escola.getInstance().cadastrarNovoProfessor(p);
         } catch (SQLException e)
         {
             System.out.println(e.getMessage());

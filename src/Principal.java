@@ -17,16 +17,12 @@ public class Principal {
             dbConnection = DriverManager.getConnection(DB_URL);
 
             System.out.println("Conectado a base de dados!");
+
+            Escola.getInstance().obterDados();
         } catch (SQLException e)
         {
             System.out.println(e.getMessage());
             dbConnected = false;
-        }
-
-        // obter dados se conectado
-        if (dbConnected)
-        {
-            Escola.getInstance().obterDados();
         }
 
         MenuUI.getInstance().run();
