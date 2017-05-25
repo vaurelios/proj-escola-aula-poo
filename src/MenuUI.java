@@ -19,7 +19,7 @@ public final class MenuUI {
         return instance;
     }
 
-    public void run()
+    public void run() throws SQLException
     {
         System.out.println("Selecione uma opção:");
         System.out.println(" - 1: Listar Objetos");
@@ -118,7 +118,7 @@ public final class MenuUI {
         }
     }
 
-    private void criar()
+    private void criar() throws SQLException
     {
         System.out.println("Selecione uma opção:");
         System.out.println(" - 1: Criar Professor");
@@ -144,20 +144,14 @@ public final class MenuUI {
         criar();
     }
 
-    private void criarTurma()
+    private void criarTurma() throws SQLException
     {
         System.out.println("Entre com os dados da nova turma...");
         System.out.printf("Entre com a série: ");
         String serie = scn.next();
 
-        try
-        {
-            Turma t = new Turma(serie);
-            Escola.getInstance().cadastrarNovaTurma(t);
-        } catch (SQLException e)
-        {
-            System.out.println(e.getMessage());
-        }
+        Turma t = new Turma(serie);
+        Escola.getInstance().cadastrarNovaTurma(t);
     }
 
     private void criarProfessor()
@@ -165,8 +159,7 @@ public final class MenuUI {
         System.out.println("Entre com os dados do novo professor...");
         String nome = promptString("Entre com o nome: ");
         String endereco = promptString("Entre com o endereço: ");
-        System.out.print("Entre Com Salário: ");
-        double salario = scn.nextDouble();
+        double salario = promptDouble("Entre Com Salário: ");
 
         try
         {
@@ -178,7 +171,7 @@ public final class MenuUI {
         }
     }
 
-    private void criarAluno()
+    private void criarAluno() throws SQLException
     {
         System.out.println("Entre com os dados do novo aluno...");
         String nome = promptString("Entre com o nome: ");
@@ -190,17 +183,11 @@ public final class MenuUI {
 
         if (idTurma == -1) return;
 
-        try
-        {
-            Aluno aluno = new Aluno(nome, endereco);
-            Escola.getInstance().matricularAluno(idTurma, aluno);
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
+        Aluno aluno = new Aluno(nome, endereco);
+        Escola.getInstance().matricularAluno(idTurma, aluno);
     }
 
-    private void modificar()
+    private void modificar() throws SQLException
     {
         System.out.println("Selecione uma opção:");
         System.out.println(" - 1: Alterar Turma");
@@ -214,17 +201,17 @@ public final class MenuUI {
         switch (scn.nextInt())
         {
             case 1:
-                // alterarTurmaInte();
+                alterarTurma();
                 break;
             case 2:
                 removerTurma();
                 break;
             case 3:
-                // alterarProfInte();
+                // alterarProf();
             case 4:
                 removerProfessor();
             case 5:
-                // alterarAlunoInte();
+                // alterarAluno();
                 break;
             case 6:
                 removerAluno();
@@ -237,7 +224,23 @@ public final class MenuUI {
         modificar();
     }
 
-    private void removerTurma()
+    private void alterarTurma() throws SQLException
+    {
+        System.out.println("Alterando turma...");
+        listarTurmas();
+        System.out.printf("Digite um ID (-1 Para Voltar): ");
+
+        int id = scn.nextInt();
+
+        if (id == -1) return;
+
+        String serie = promptString("Entre com a série: ");
+        Escola.getInstance().getTurma(id).setSerie(serie);
+
+        alterarTurma();
+    }
+
+    private void removerTurma() throws SQLException
     {
         System.out.printf("%-5s | %-72s\n", "ID", "Serie");
 
@@ -245,7 +248,6 @@ public final class MenuUI {
         {
             System.out.printf("%-5d | %-72s\n", t.getId(), t.getSerie());
         }
-
 
         System.out.printf("Digite um ID (-1 Para Voltar): ");
 
@@ -258,7 +260,7 @@ public final class MenuUI {
         removerTurma();
     }
 
-    private void removerProfessor()
+    private void removerProfessor() throws SQLException
     {
         System.out.printf("%-5s | %-30s | %-31s | %-5s\n", "ID", "Nome", "Endereço", "Salário");
 
@@ -282,7 +284,7 @@ public final class MenuUI {
         removerProfessor();
     }
 
-    private void removerAluno()
+    private void removerAluno() throws SQLException
     {
         System.out.printf("%-5s | %-30s | %-31s | %-5s\n", "ID", "Nome", "Endereço", "ID da Turma");
 
@@ -313,6 +315,12 @@ public final class MenuUI {
     {
         System.out.printf("%s", msg);
         return scn.nextInt();
+    }
+
+    private Double promptDouble(String msg)
+    {
+        System.out.printf("%s", msg);
+        return scn.nextDouble();
     }
 
     private String promptString(String msg)

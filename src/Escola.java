@@ -105,6 +105,14 @@ public final class Escola {
         prof.populaDb();
     }
 
+    public Turma getTurma(int id) throws IndexOutOfBoundsException
+    {
+        if (turmas.containsKey(id))
+            return turmas.get(id);
+
+        throw new IndexOutOfBoundsException("Turma com ID (" + id + ") inexistente!");
+    }
+
     public int getQuantTurmas()
     {
         return turmas.size();
@@ -145,12 +153,13 @@ public final class Escola {
         throw new IndexOutOfBoundsException("Turma com ID(" + id + ") não encontrada!");
     }
 
-    public void removerTurma(int id)
+    public void removerTurma(int id) throws SQLException
     {
+        turmas.get(id).removerDb();
         turmas.remove(id);
     }
 
-    public void removerProfessor(int id)
+    public void removerProfessor(int id) throws SQLException
     {
         profs.get(id).removerDb();
         profs.remove(id);

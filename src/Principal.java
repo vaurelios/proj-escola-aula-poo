@@ -25,6 +25,12 @@ public class Principal {
             dbConnected = false;
         }
 
-        MenuUI.getInstance().run();
+        try
+        {
+            MenuUI.getInstance().run();
+        } catch (SQLException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 }

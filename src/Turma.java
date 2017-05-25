@@ -45,6 +45,12 @@ public class Turma {
         return _serie;
     }
 
+    public void setSerie(String serie) throws SQLException
+    {
+        this._serie = serie;
+        executeUpdateQuery();
+    }
+
     public int getQuantAlunos()
     {
         return this.alunos.size();
@@ -140,5 +146,15 @@ public class Turma {
         pstmt.setInt(1, this.getId());
 
         return pstmt.executeUpdate() > 0;
+    }
+
+    public void executeUpdateQuery() throws SQLException
+    {
+        if (this.getId() < 1) return;
+
+        PreparedStatement stmt = Principal.dbConnection.prepareStatement("UPDATE turmas SET serie=? WHERE id=?");
+        stmt.setString(1, this.getSerie());
+        stmt.setInt(2, this.getId());
+        stmt.executeUpdate();
     }
 }
